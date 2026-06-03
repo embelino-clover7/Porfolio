@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Portfolio | Cristian T. Embelino</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --neon-green: #39FF14;
+            --neon-glow: rgba(57, 255, 20, 0.3);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 80px; height: 100vh; background: var(--bg-card); border-right: 2px solid var(--neon-green); transition: 0.4s; display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar:hover { width: 280px; }
+        .sidebar-header { padding: 30px 0; text-align: center; border-bottom: 1px solid rgba(57, 255, 20, 0.3); }
+        .menu-item { display: flex; align-items: center; padding: 15px 20px; color: var(--text-main); cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-item:hover, .menu-item.active { background: rgba(57, 255, 20, 0.1); border-left-color: var(--neon-green); color: var(--neon-green); }
+        .menu-text { margin-left: 15px; font-weight: bold; opacity: 0; transition: 0.3s; }
+        .sidebar:hover .menu-text { opacity: 1; }
+
+        /* Main Content */
+        .content-area { flex: 1; padding: 40px; overflow-y: auto; }
+        
+        /* Grid Layout */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
+        
+        /* ZOOM-IN HOVER EFFECT (Restored) */
+        .gallery-img { 
+            width: 100%; height: 250px; object-fit: cover; 
+            border: 2px solid var(--neon-green); border-radius: 8px; 
+            cursor: pointer; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .gallery-img:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+        
+        /* Lightbox Modal */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out; }
+        #lightbox img { max-width: 90%; max-height: 85%; border: 3px solid var(--neon-green); border-radius: 10px; animation: expand 0.3s ease; }
+        @keyframes expand { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .role-desc { color: var(--text-main); font-size: 1rem; line-height: 1.6; max-width: 900px; border-left: 3px solid var(--neon-green); padding-left: 20px; background: var(--bg-card); padding: 20px; border-radius: 0 8px 8px 0; }
+        .back-btn { color: var(--neon-green); text-decoration: none; font-weight: bold; border: 1px solid var(--neon-green); padding: 8px 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Zoomed View">
+    </div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-microchip" style="color:var(--neon-green)"></i></div>
+        <div class="menu-item active" onclick="showCategory('network')"><i class="fas fa-network-wired"></i><span class="menu-text">Network Admin</span></div>
+        <div class="menu-item" onclick="showCategory('firewall')"><i class="fas fa-shield-alt"></i><span class="menu-text">Firewall Security</span></div>
+        <div class="menu-item" onclick="showCategory('cctv')"><i class="fas fa-video"></i><span class="menu-text">CCTV Systems</span></div>
+        <div class="menu-item" onclick="showCategory('led')"><i class="fas fa-tv"></i><span class="menu-text">LED Billboards</span></div>
+        <div class="menu-item" onclick="showCategory('repair')"><i class="fas fa-tools"></i><span class="menu-text">Hardware Repair</span></div>
+        <div class="menu-category" style="margin: 15px 0 5px 20px; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim);">Design Studio</div>
+        <div class="menu-item" onclick="showCategory('tarpaulin')"><i class="fas fa-scroll"></i><span class="menu-text">Tarpaulin Design</span></div>
+        <div class="menu-item" onclick="showCategory('tshirt')"><i class="fas fa-tshirt"></i><span class="menu-text">T-Shirt Design</span></div>
+    </nav>
+
+    <main class="content-area">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <h1 id="title" style="color:var(--neon-green)">Network Administration</h1>
+            <a href="index.html" class="back-btn">← Main System</a>
+        </div>
+        <div id="desc" class="role-desc"></div>
+        <div id="grid" class="gallery-grid"></div>
+    </main>
+
+    <script>
+        const data = {
+            network: {
+                title: "Network Administration",
+                desc: `<p><strong>Role:</strong> Central administrator for regional operations.</p><p><strong>Tasks:</strong> Designing LAN/WAN, switch management, and cable organization.</p>`,
+                imgs: ["PIC/netadmin/net1.jpg", "PIC/netadmin/net2.jpg", "PIC/netadmin/net3.jpg"]
+            },
+            firewall: {
+                title: "Firewall & Security",
+                desc: `<p><strong>Role:</strong> Maintaining perimeter security via pfSense.</p><p><strong>Tasks:</strong> Traffic filtering, rule enforcement, and VPN configuration.</p>`,
+                imgs: ["PIC/PFsense/pf1.png", "PIC/PFsense/pf2.png"]
+            },
+            cctv: {
+                title: "Hikvision CCTV Systems",
+                desc: `<p><strong>Role:</strong> Lead Technician for surveillance infrastructure.</p><p><strong>Tasks:</strong> IP configuration, NVR setup, and secure backup management.</p>`,
+                imgs: ["PIC/cctv/cctv1.jpg", "PIC/cctv/cctv2.jpg", "PIC/cctv/cctv3.jpg"]
+            },
+            led: {
+                title: "LED Billboard Operations",
+                desc: `<p><strong>Role:</strong> Technical lead for high-visibility display assets.</p><p><strong>Tasks:</strong> Module repair, content synchronization, and signal routing.</p>`,
+                imgs: ["PIC/LED/led1.jpg", "PIC/LED/led2.jpg"]
+            },
+            repair: {
+                title: "Hardware Maintenance",
+                desc: `<p><strong>Role:</strong> Lead Technician for workstation and peripheral uptime.</p><p><strong>Tasks:</strong> Motherboard diagnostics, laptop servicing, and printer optimization.</p>`,
+                imgs: ["PIC/COMP/comp1.jpg", "PIC/COMP/comp2.jpg", "PIC/COMP/comp3.jpg"]
+            },
+            tarpaulin: {
+                title: "Tarpaulin Design",
+                desc: `<p><strong>Role:</strong> Creative visual communication for church and community events.</p><p><strong>Tasks:</strong> Large-format layout design, event branding, and promotional banners.</p>`,
+                imgs: ["PIC/design/Tarp/d1.png", "PIC/design/Tarp/d2.jpg", "PIC/design/Tarp/d3.png", "PIC/design/Tarp/d4.png", "PIC/design/Tarp/d5.png", "PIC/design/Tarp/d7.jpg" ]
+            },
+            tshirt: {
+                title: "T-Shirt Design",
+                desc: `<p><strong>Role:</strong> Custom apparel design for events and personalized gifts.</p><p><strong>Tasks:</strong> Graphics creation, vector layout, and print-ready file preparation.</p>`,
+                imgs: ["PIC/design/shirt/s1.png", "PIC/design/shirt/s2.png"]
+            }
+        };
+
+        function showCategory(key) {
+            const cat = data[key];
+            document.getElementById('title').innerText = cat.title;
+            document.getElementById('desc').innerHTML = cat.desc;
+            const grid = document.getElementById('grid');
+            grid.innerHTML = cat.imgs.map(img => `<img src="${img}" class="gallery-img" onclick="openLightbox('${img}')" alt="Work Sample">`).join('');
+            
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            lightbox.style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        window.onload = () => showCategory('network');
+    </script>
+</body>
+</html>
