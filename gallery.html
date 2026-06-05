@@ -4,144 +4,740 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technical Portfolio | Cristian T. Embelino</title>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0f172a;
             --bg-card: #1e293b;
+            --bg-secondary: #0a0f1d;
             --neon-green: #39FF14;
             --neon-glow: rgba(57, 255, 20, 0.3);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
+            --transition-speed: 0.3s;
+            --shadow-color: rgba(57, 255, 20, 0.15);
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
-
-        /* Sidebar */
-        .sidebar { width: 80px; height: 100vh; background: var(--bg-card); border-right: 2px solid var(--neon-green); transition: 0.4s; display: flex; flex-direction: column; overflow: hidden; }
-        .sidebar:hover { width: 280px; }
-        .sidebar-header { padding: 30px 0; text-align: center; border-bottom: 1px solid rgba(57, 255, 20, 0.3); }
-        .menu-item { display: flex; align-items: center; padding: 15px 20px; color: var(--text-main); cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(57, 255, 20, 0.1); border-left-color: var(--neon-green); color: var(--neon-green); }
-        .menu-text { margin-left: 15px; font-weight: bold; opacity: 0; transition: 0.3s; }
-        .sidebar:hover .menu-text { opacity: 1; }
-
-        /* Main Content */
-        .content-area { flex: 1; padding: 40px; overflow-y: auto; }
-        
-        /* Grid Layout */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
-        
-        /* ZOOM-IN HOVER EFFECT (Restored) */
-        .gallery-img { 
-            width: 100%; height: 250px; object-fit: cover; 
-            border: 2px solid var(--neon-green); border-radius: 8px; 
-            cursor: pointer; 
-            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .gallery-img:hover { 
-            transform: scale(1.05); 
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-secondary) 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            animation: pageEnter 0.5s ease forwards;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        body.page-exit {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* Fixed particles background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 90px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--bg-card) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border-right: 2px solid var(--neon-green);
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: sticky;
+            top: 0;
+            box-shadow: 2px 0 30px var(--shadow-color);
+        }
+
+        .sidebar:hover {
+            width: 300px;
+        }
+
+        .sidebar-header {
+            padding: 30px 15px;
+            text-align: center;
+            border-bottom: 2px solid rgba(57, 255, 20, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-header i {
+            font-size: 2rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .sidebar-title {
+            margin-left: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .menu-divider {
+            margin: 20px 0;
+            padding: 0 15px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover .menu-divider {
+            opacity: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 15px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(57, 255, 20, 0.1);
+            transition: width 0.3s;
+            z-index: -1;
+        }
+
+        .menu-item:hover::before,
+        .menu-item.active::before {
+            width: 100%;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            color: var(--neon-green);
+            border-left-color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .menu-item i {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .menu-text {
+            margin-left: 12px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .sidebar:hover .menu-text {
+            opacity: 1;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Section */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .header-content h1 {
+            font-size: 3rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .category-subtitle {
+            font-size: 1.1rem;
+            color: var(--neon-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--neon-green);
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid var(--neon-green);
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: all var(--transition-speed);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            background: transparent;
+        }
+
+        .back-btn:hover {
+            background: var(--neon-green);
+            color: #000;
             box-shadow: 0 0 20px var(--neon-glow);
+            transform: translateY(-2px);
         }
-        
-        /* Lightbox Modal */
-        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 1000; justify-content: center; align-items: center; cursor: zoom-out; }
-        #lightbox img { max-width: 90%; max-height: 85%; border: 3px solid var(--neon-green); border-radius: 10px; animation: expand 0.3s ease; }
-        @keyframes expand { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .role-desc { color: var(--text-main); font-size: 1rem; line-height: 1.6; max-width: 900px; border-left: 3px solid var(--neon-green); padding-left: 20px; background: var(--bg-card); padding: 20px; border-radius: 0 8px 8px 0; }
-        .back-btn { color: var(--neon-green); text-decoration: none; font-weight: bold; border: 1px solid var(--neon-green); padding: 8px 15px; border-radius: 5px; }
+        /* Role Description Card */
+        .role-desc {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 41, 59, 0.7) 100%);
+            border: 2px solid var(--neon-green);
+            border-left: 5px solid var(--neon-green);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role-desc p {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .role-desc p:last-child {
+            margin-bottom: 0;
+        }
+
+        .role-desc strong {
+            color: var(--neon-green);
+            font-weight: 700;
+        }
+
+        /* Skills Highlight Section */
+        .skills-highlight {
+            background: linear-gradient(135deg, rgba(57, 255, 20, 0.05) 0%, transparent 100%);
+            border: 2px solid rgba(57, 255, 20, 0.3);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            animation: slideIn 0.6s ease-out 0.1s both;
+        }
+
+        .skills-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--neon-green);
+        }
+
+        .skills-title i {
+            font-size: 1.5rem;
+            text-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(57, 255, 20, 0.08);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            transition: all var(--transition-speed);
+            cursor: default;
+        }
+
+        .skill-item:hover {
+            background: rgba(57, 255, 20, 0.15);
+            border-color: var(--neon-green);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .skill-item i {
+            color: var(--neon-green);
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .skill-item span {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            animation: slideIn 0.6s ease-out 0.2s both;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(57, 255, 20, 0.2);
+            transition: all 0.3s ease;
+            cursor: default; /* Changed from pointer to avoid click inference */
+        }
+
+        .gallery-item:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 10px 35px var(--shadow-color);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: block;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.08) rotate(1deg);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #32cd32;
+        }
+
+        /* Responsive Configuration */
+        @media (max-width: 1024px) {
+            .content-area {
+                padding: 30px;
+            }
+
+            .header-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar:hover {
+                width: 250px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .header-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 200px;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .role-desc {
+                padding: 20px;
+            }
+
+            .role-desc p {
+                font-size: 0.95rem;
+            }
+
+            .skills-highlight {
+                padding: 20px;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <img id="lightbox-img" src="" alt="Zoomed View">
+    <div id="particles-js"></div>
+
+    <div class="page-wrapper">
+        <nav class="sidebar" data-aos="fade-right">
+            <div class="sidebar-header">
+                <i class="fas fa-microchip"></i>
+                <span class="sidebar-title">PORTFOLIO</span>
+            </div>
+
+            <div style="flex: 1; overflow-y: auto;">
+                <div class="menu-divider">Technical Services</div>
+                <div class="menu-item active" onclick="showCategory('network', event)" data-category="network">
+                    <i class="fas fa-network-wired"></i>
+                    <span class="menu-text">Network Admin</span>
+                </div>
+                <div class="menu-item" onclick="showCategory('firewall', event)" data-category="firewall">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="menu-text">Firewall Security</span>
+                </div>
+                <div class="menu-item" onclick="showCategory('cctv', event)" data-category="cctv">
+                    <i class="fas fa-video"></i>
+                    <span class="menu-text">CCTV Systems</span>
+                </div>
+                <div class="menu-item" onclick="showCategory('led', event)" data-category="led">
+                    <i class="fas fa-tv"></i>
+                    <span class="menu-text">LED Billboards</span>
+                </div>
+                <div class="menu-item" onclick="showCategory('repair', event)" data-category="repair">
+                    <i class="fas fa-tools"></i>
+                    <span class="menu-text">Hardware Repair</span>
+                </div>
+
+                <div class="menu-divider">Design & Creative</div>
+                <div class="menu-item" onclick="showCategory('tarpaulin', event)" data-category="tarpaulin">
+                    <i class="fas fa-scroll"></i>
+                    <span class="menu-text">Tarpaulin Design</span>
+                </div>
+                <div class="menu-item" onclick="showCategory('tshirt', event)" data-category="tshirt">
+                    <i class="fas fa-tshirt"></i>
+                    <span class="menu-text">T-Shirt Design</span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="content-area" data-aos="fade-left">
+            <div class="header-section">
+                <div class="header-content">
+                    <h1 id="title">Network Administration</h1>
+                    <div class="category-subtitle">Technical Excellence & Innovation</div>
+                </div>
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> MAIN SYSTEM
+                </a>
+            </div>
+
+            <div id="desc" class="role-desc"></div>
+
+            <div id="skills-section" class="skills-highlight">
+                <div class="skills-title">
+                    <i class="fas fa-star"></i> Key Skills
+                </div>
+                <div class="skills-grid" id="skills-grid"></div>
+            </div>
+
+            <div id="grid" class="gallery-grid"></div>
+        </main>
     </div>
 
-    <nav class="sidebar">
-        <div class="sidebar-header"><i class="fas fa-microchip" style="color:var(--neon-green)"></i></div>
-        <div class="menu-item active" onclick="showCategory('network')"><i class="fas fa-network-wired"></i><span class="menu-text">Network Admin</span></div>
-        <div class="menu-item" onclick="showCategory('firewall')"><i class="fas fa-shield-alt"></i><span class="menu-text">Firewall Security</span></div>
-        <div class="menu-item" onclick="showCategory('cctv')"><i class="fas fa-video"></i><span class="menu-text">CCTV Systems</span></div>
-        <div class="menu-item" onclick="showCategory('led')"><i class="fas fa-tv"></i><span class="menu-text">LED Billboards</span></div>
-        <div class="menu-item" onclick="showCategory('repair')"><i class="fas fa-tools"></i><span class="menu-text">Hardware Repair</span></div>
-        <div class="menu-category" style="margin: 15px 0 5px 20px; font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim);">Design Studio</div>
-        <div class="menu-item" onclick="showCategory('tarpaulin')"><i class="fas fa-scroll"></i><span class="menu-text">Tarpaulin Design</span></div>
-        <div class="menu-item" onclick="showCategory('tshirt')"><i class="fas fa-tshirt"></i><span class="menu-text">T-Shirt Design</span></div>
-    </nav>
-
-    <main class="content-area">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <h1 id="title" style="color:var(--neon-green)">Network Administration</h1>
-            <a href="index.html" class="back-btn">← Main System</a>
-        </div>
-        <div id="desc" class="role-desc"></div>
-        <div id="grid" class="gallery-grid"></div>
-    </main>
-
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Particles JS
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#39FF14" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.2, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#39FF14",
+                    "opacity": 0.3,
+                    "width": 1
+                },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "grab": { "distance": 200, "line_linked": { "opacity": 0.8 } } }
+            },
+            "retina_detect": true
+        });
+
+        // Portfolio Data
         const data = {
             network: {
                 title: "Network Administration",
-                desc: `<p><strong>Role:</strong> Central administrator for regional operations.</p><p><strong>Tasks:</strong> Designing LAN/WAN, switch management, and cable organization.</p>`,
+                desc: `<p><strong>Role:</strong> Central administrator for regional operations across Bacolod, Iloilo, and Cebu City.</p><p><strong>Responsibilities:</strong> Design and implement LAN/WAN infrastructure, manage network switches, organize cabling systems, and ensure optimal network performance for all branch locations.</p>`,
+                skills: [
+                    { icon: "fas fa-sitemap", name: "LAN/WAN Design" },
+                    { icon: "fas fa-random", name: "Switch Management" },
+                    { icon: "fas fa-layer-group", name: "VLAN Configuration" },
+                    { icon: "fas fa-link", name: "Cable Organization" },
+                    { icon: "fas fa-wifi", name: "Wireless Networks" },
+                    { icon: "fas fa-ethernet", name: "Ethernet Setup" }
+                ],
                 imgs: ["PIC/netadmin/net1.jpg", "PIC/netadmin/net2.jpg", "PIC/netadmin/net3.jpg"]
             },
             firewall: {
                 title: "Firewall & Security",
-                desc: `<p><strong>Role:</strong> Maintaining perimeter security via pfSense.</p><p><strong>Tasks:</strong> Traffic filtering, rule enforcement, and VPN configuration.</p>`,
+                desc: `<p><strong>Role:</strong> Security architect maintaining perimeter defense via pfSense firewall solutions.</p><p><strong>Responsibilities:</strong> Configure traffic filtering rules, enforce security policies, establish VPN connections, monitor network threats, and maintain secure data transmission protocols.</p>`,
+                skills: [
+                    { icon: "fas fa-shield-alt", name: "pfSense Config" },
+                    { icon: "fas fa-ban", name: "Firewall Rules" },
+                    { icon: "fas fa-lock", name: "VPN Setup" },
+                    { icon: "fas fa-eye", name: "Traffic Monitoring" },
+                    { icon: "fas fa-key", name: "Access Control" },
+                    { icon: "fas fa-shield-virus", name: "Threat Prevention" }
+                ],
                 imgs: ["PIC/PFsense/pf1.png", "PIC/PFsense/pf2.png"]
             },
             cctv: {
                 title: "Hikvision CCTV Systems",
-                desc: `<p><strong>Role:</strong> Lead Technician for surveillance infrastructure.</p><p><strong>Tasks:</strong> IP configuration, NVR setup, and secure backup management.</p>`,
+                desc: `<p><strong>Role:</strong> Lead technician for comprehensive surveillance infrastructure deployment and maintenance.</p><p><strong>Responsibilities:</strong> Configure IP cameras, setup NVR systems, manage secure backup protocols, monitor video feeds, and ensure continuous surveillance operation.</p>`,
+                skills: [
+                    { icon: "fas fa-video", name: "Camera Setup" },
+                    { icon: "fas fa-hdd", name: "NVR Configuration" },
+                    { icon: "fas fa-database", name: "Data Backup" },
+                    { icon: "fas fa-tv", name: "Video Monitoring" },
+                    { icon: "fas fa-network-wired", name: "IP Configuration" },
+                    { icon: "fas fa-cog", name: "System Maintenance" }
+                ],
                 imgs: ["PIC/CCTV/cctv1.jpg", "PIC/CCTV/cctv2.jpg", "PIC/CCTV/cctv3.jpg"]
             },
             led: {
                 title: "LED Billboard Operations",
-                desc: `<p><strong>Role:</strong> Technical lead for high-visibility display assets.</p><p><strong>Tasks:</strong> Module repair, content synchronization, and signal routing.</p>`,
+                desc: `<p><strong>Role:</strong> Technical lead for high-visibility display assets and advertising infrastructure.</p><p><strong>Responsibilities:</strong> Perform module repairs, synchronize content across displays, manage signal routing, maintain display quality, and ensure maximum operational uptime.</p>`,
+                skills: [
+                    { icon: "fas fa-wrench", name: "Module Repair" },
+                    { icon: "fas fa-image", name: "Content Management" },
+                    { icon: "fas fa-signal", name: "Signal Routing" },
+                    { icon: "fas fa-sliders-h", name: "Display Tuning" },
+                    { icon: "fas fa-clock", name: "Uptime Management" },
+                    { icon: "fas fa-microchip", name: "Electronics" }
+                ],
                 imgs: ["PIC/LED/led1.jpg", "PIC/LED/led2.jpg"]
             },
             repair: {
                 title: "Hardware Maintenance",
-                desc: `<p><strong>Role:</strong> Lead Technician for workstation and peripheral uptime.</p><p><strong>Tasks:</strong> Motherboard diagnostics, laptop servicing, and printer optimization.</p>`,
+                desc: `<p><strong>Role:</strong> Lead technician for comprehensive workstation and peripheral uptime management.</p><p><strong>Responsibilities:</strong> Diagnose motherboard issues, service laptops, optimize printers, maintain peripherals, and provide rapid technical support across all locations.</p>`,
+                skills: [
+                    { icon: "fas fa-laptop", name: "Laptop Service" },
+                    { icon: "fas fa-microchip", name: "Diagnostics" },
+                    { icon: "fas fa-print", name: "Printer Repair" },
+                    { icon: "fas fa-plug", name: "Peripheral Setup" },
+                    { icon: "fas fa-tools", name: "Troubleshooting" },
+                    { icon: "fas fa-sync", name: "Component Replace" }
+                ],
                 imgs: ["PIC/COMP/comp1.jpg", "PIC/COMP/comp2.jpg", "PIC/COMP/comp3.jpg"]
             },
             tarpaulin: {
                 title: "Tarpaulin Design",
-                desc: `<p><strong>Role:</strong> Creative visual communication for church and community events.</p><p><strong>Tasks:</strong> Large-format layout design, event branding, and promotional banners.</p>`,
-                imgs: ["PIC/Design/Tarp/d1.png", "PIC/Design/Tarp/d2.jpg", "PIC/Design/Tarp/d3.png", "PIC/Design/Tarp/d4.png", "PIC/Design/Tarp/d5.png", "PIC/Design/Tarp/d7.jpg" ]
+                desc: `<p><strong>Role:</strong> Creative designer for visual communication and brand representation.</p><p><strong>Responsibilities:</strong> Create large-format layouts, design event branding, develop promotional banners, and produce print-ready materials for church and community events.</p>`,
+                skills: [
+                    { icon: "fas fa-paint-brush", name: "Graphic Design" },
+                    { icon: "fas fa-crop", name: "Layout Design" },
+                    { icon: "fas fa-palette", name: "Color Theory" },
+                    { icon: "fas fa-text-width", name: "Typography" },
+                    { icon: "fas fa-file-pdf", name: "Print Ready" },
+                    { icon: "fas fa-pen-fancy", name: "Branding" }
+                ],
+                imgs: ["PIC/Design/Tarp/d1.png", "PIC/Design/Tarp/d2.jpg", "PIC/Design/Tarp/d3.png", "PIC/Design/Tarp/d4.png", "PIC/Design/Tarp/d5.png", "PIC/Design/Tarp/d7.jpg"]
             },
             tshirt: {
                 title: "T-Shirt Design",
-                desc: `<p><strong>Role:</strong> Custom apparel design for events and personalized gifts.</p><p><strong>Tasks:</strong> Graphics creation, vector layout, and print-ready file preparation.</p>`,
+                desc: `<p><strong>Role:</strong> Custom apparel designer specializing in personalized and event-specific designs.</p><p><strong>Responsibilities:</strong> Create graphics, develop vector layouts, design custom artwork, prepare print-ready files, and produce professional apparel designs for events and gifts.</p>`,
+                skills: [
+                    { icon: "fas fa-vector-square", name: "Vector Design" },
+                    { icon: "fas fa-pen-nib", name: "Graphics Creation" },
+                    { icon: "fas fa-pen-ruler", name: "Artwork Layout" },
+                    { icon: "fas fa-file-image", name: "Mockup Design" },
+                    { icon: "fas fa-print", name: "Print Preparation" },
+                    { icon: "fas fa-shirt", name: "Apparel Design" }
+                ],
                 imgs: ["PIC/Design/Shirt/s1.png", "PIC/Design/Shirt/s2.png"]
             }
         };
 
-        function showCategory(key) {
+        function showCategory(key, event) {
             const cat = data[key];
+            if (!cat) return;
+
             document.getElementById('title').innerText = cat.title;
             document.getElementById('desc').innerHTML = cat.desc;
+
+            // Update Skills Grid
+            const skillsGrid = document.getElementById('skills-grid');
+            skillsGrid.innerHTML = cat.skills.map(skill =>
+                `<div class="skill-item" data-aos="fade-up">
+                    <i class="${skill.icon}"></i>
+                    <span>${skill.name}</span>
+                </div>`
+            ).join('');
+
+            // Update Gallery Grid (Removed click listeners and cursor cues)
             const grid = document.getElementById('grid');
-            grid.innerHTML = cat.imgs.map(img => `<img src="${img}" class="gallery-img" onclick="openLightbox('${img}')" alt="Work Sample">`).join('');
-            
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            grid.innerHTML = cat.imgs.map(img =>
+                `<div class="gallery-item" data-aos="fade-up">
+                    <img src="${img}" class="gallery-img" alt="Work Sample">
+                </div>`
+            ).join('');
+
+            // Update active navigation state safely
+            if (event && event.currentTarget) {
+                document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+            }
+
+            // Reinitialize scroll animations
+            AOS.refreshHard();
         }
 
-        function openLightbox(src) {
-            const lightbox = document.getElementById('lightbox');
-            const img = document.getElementById('lightbox-img');
-            img.src = src;
-            lightbox.style.display = 'flex';
-        }
+        // Seamless Page Unload Transitions
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                const target = this.getAttribute('href');
+                if (target && !target.startsWith('#') && !target.startsWith('http') && target.indexOf('mailto:') === -1 && target.indexOf('tel:') === -1 && this.getAttribute('target') !== '_blank') {
+                    e.preventDefault();
+                    document.body.classList.add('page-exit');
+                    setTimeout(() => {
+                        window.location.href = target;
+                    }, 400);
+                }
+            });
+        });
 
-        function closeLightbox() {
-            document.getElementById('lightbox').style.display = 'none';
-        }
-
-        window.onload = () => showCategory('network');
+        // Initialize First Category on DOM Load
+        window.onload = () => {
+            const firstItem = document.querySelector('.menu-item.active');
+            if (firstItem) {
+                const event = { currentTarget: firstItem };
+                showCategory('network', event);
+            }
+        };
     </script>
 </body>
 </html>
